@@ -1,0 +1,239 @@
+'use client';
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createClient } from '@/lib/supabaseClient';
+import { Transaction, INCOME_CATEGORIES, EXPENSE_CATEGORIES } from '@/lib/types';
+import { formatDate, formatCurrency, getCategoryColor } from '@/lib/utils';
+import {
+  Plus, Pencil, Trash2, Search, X, ArrowUpRight, ArrowDownRight, ChevronDown,
+} from 'lucide-react';
+import Link from 'next/link';
+import TransactionForm from '@/components/TransactionForm';
+import Modal from '@/components/Modal';
+
+export default function TransactionsPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [search, setSearch]             = useState('');
+  const [filterType, setFilterType]     = useState<'all' | 'income' | 'expense'>('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterDate, setFilterDate]     = useState('');
+  const [editTarget, setEditTarget]     = useState<Transaction | null>(null);
+  const [deleteId, setDeleteId]         = useState<string | null>(null);
+  const [deleting, setDeleting]         = useState(false);
+
+  const allCategories = [...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES];
+
+  const fetchTransactions = useCallback(async () => {
+    setLoading(true);
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('transactions')
+      .select('*')
+      .order('date', { ascending: false });
+    setTransactions(data as Transaction[] ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const filtered = useMemo(() => {
+    let result = [...transactions];
+    if (filterType !== 'all')     result = result.filter((t) => t.type === filterType);
+    if (filterCategory !== 'all') result = result.filter((t) => t.category === filterCategory);
+    if (filterDate)               result = result.filter((t) => t.date === filterDate);
+    if (search.trim())            result = result.filter((t) =>
+      t.description.toLowerCase().includes(search.toLowerCase()) ||
+      t.category.toLowerCase().includes(search.toLowerCase())
+    );
+    return result;
+  }, [transactions, filterType, filterCategory, filterDate, search]);
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.from('transactions').delete().eq('id', deleteId);
+    setDeleteId(null);
+    setDeleting(false);
+    fetchTransactions();
+  }
+
+  function clearFilters() {
+    setFilterType('all');
+    setFilterCategory('all');
+    setFilterDate('');
+    setSearch('');
+  }
+
+  const hasFilters = filterType !== 'all' || filterCategory !== 'all' || filterDate || search;
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Transaksi</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{filtered.length} transaksi</p>
+        </div>
+        <Link href="/transactions/new" id="new-transaction-btn" className="btn-primary flex items-center gap-2">
+          <Plus className="w-4 h-4" /> Tambah Transaksi
+        </Link>
+      </div>
+
+      {/* Filters */}
+      <div className="glass-card p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {/* Search */}
+          <div className="flex items-center gap-2 lg:col-span-2">
+            <Search className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+            <input id="filter-search" type="text" value={search} onChange={(e) => setSearch(e.target.value)} className="input-field flex-1" placeholder="Cari transaksi..." />
+          </div>
+
+          {/* Type filter */}
+          <div className="relative">
+            <select id="filter-type" value={filterType} onChange={(e) => setFilterType(e.target.value as 'all' | 'income' | 'expense')} className="input-field appearance-none pr-8">
+              <option value="all">Semua Jenis</option>
+              <option value="income">Pemasukan</option>
+              <option value="expense">Pengeluaran</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
+          </div>
+
+          {/* Category filter */}
+          <div className="relative">
+            <select id="filter-category" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="input-field appearance-none pr-8">
+              <option value="all">Semua Kategori</option>
+              {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
+          </div>
+
+          {/* Date filter */}
+          <div className="flex items-center gap-2">
+            <input id="filter-date" type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="input-field flex-1" title="Tanggal transaksi" />
+          </div>
+        </div>
+
+        {hasFilters && (
+          <button id="clear-filters-btn" onClick={clearFilters} className="mt-3 flex items-center gap-2 text-xs" style={{ color: '#a5b4fc', background: 'none', border: 'none', cursor: 'pointer' }}>
+            <X className="w-3 h-3" /> Hapus filter
+          </button>
+        )}
+      </div>
+
+      {/* Table */}
+      <div className="glass-card overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <span className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-14">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tidak ada transaksi ditemukan.</p>
+            {hasFilters && (
+              <button onClick={clearFilters} className="mt-2 text-xs" style={{ color: '#a5b4fc', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Hapus filter
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                  {['Tanggal', 'Kategori', 'Deskripsi', 'Jenis', 'Jumlah', 'Aksi'].map((h) => (
+                    <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)', background: 'var(--bg-secondary)' }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((t, i) => (
+                  <tr
+                    key={t.id}
+                    className="transition-colors"
+                    style={{ borderBottom: '1px solid var(--border)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-card-hover)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)')}
+                  >
+                    <td className="px-5 py-3.5 text-sm whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>{formatDate(t.date)}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg" style={{ background: getCategoryColor(t.category) + '22', color: getCategoryColor(t.category) }}>
+                        {t.category}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-sm max-w-[160px] truncate" style={{ color: 'var(--text-primary)' }}>{t.description || '—'}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${t.type === 'income' ? 'income-badge' : 'expense-badge'}`}>
+                        {t.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-sm font-semibold whitespace-nowrap" style={{ color: t.type === 'income' ? '#22c55e' : '#ef4444' }}>
+                      <span className="flex items-center gap-1">
+                        {t.type === 'income' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                        {formatCurrency(t.amount)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-2">
+                        <button
+                          id={`edit-btn-${t.id}`}
+                          onClick={() => setEditTarget(t)}
+                          className="p-1.5 rounded-lg transition-colors"
+                          style={{ background: 'rgba(99,102,241,0.1)', color: '#a5b4fc', border: 'none', cursor: 'pointer' }}
+                          title="Edit"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          id={`delete-btn-${t.id}`}
+                          onClick={() => setDeleteId(t.id)}
+                          className="p-1.5 rounded-lg transition-colors"
+                          style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', cursor: 'pointer' }}
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editTarget && (
+        <Modal title="Edit Transaksi" onClose={() => setEditTarget(null)}>
+          <TransactionForm
+            initial={editTarget}
+            onSuccess={() => { setEditTarget(null); fetchTransactions(); }}
+            onCancel={() => setEditTarget(null)}
+          />
+        </Modal>
+      )}
+
+      {/* Delete Confirm Modal */}
+      {deleteId && (
+        <Modal title="Hapus Transaksi" onClose={() => setDeleteId(null)}>
+          <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
+            Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button id="cancel-delete-btn" onClick={() => setDeleteId(null)} className="btn-secondary">Batal</button>
+            <button id="confirm-delete-btn" onClick={handleDelete} disabled={deleting} className="btn-danger flex items-center gap-2">
+              {deleting ? <span className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              Hapus
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
