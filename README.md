@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+````markdown
+# Finance Tracker
 
-## Getting Started
+Finance Tracker adalah aplikasi web sederhana untuk membantu pengguna mencatat dan memantau kondisi keuangan pribadi. Aplikasi ini memungkinkan pengguna mencatat pemasukan dan pengeluaran sehingga dapat melihat ringkasan keuangan dengan lebih mudah.
 
-First, run the development server:
+Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.js** dan **Supabase**, serta sebagai bagian dari portfolio pengembangan web.
+
+---
+
+## Features
+
+- Login menggunakan **Google Account (OAuth)**
+- Menambahkan data **pemasukan**
+- Menambahkan data **pengeluaran**
+- Melihat daftar transaksi
+- Menghapus transaksi
+- Dashboard ringkasan keuangan
+- Autentikasi pengguna menggunakan **Supabase Auth**
+- Penyimpanan data menggunakan **Supabase Database**
+
+---
+
+## Tech Stack
+
+Project ini dibangun menggunakan teknologi berikut:
+
+- **Next.js** – React framework untuk membangun aplikasi web modern
+- **Supabase** – Backend as a Service untuk authentication dan database
+- **Google OAuth** – Sistem login menggunakan akun Google
+- **Tailwind CSS** – Styling dan desain antarmuka
+- **Vercel** – Platform deployment untuk aplikasi web
+
+---
+
+## Installation
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/username/finance-tracker.git
+````
+
+Masuk ke folder project:
+
+```bash
+cd finance-tracker
+```
+
+---
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+atau
+
+```bash
+yarn install
+```
+
+---
+
+### 3. Setup Environment Variables
+
+Buat file `.env.local` di root project, lalu isi dengan konfigurasi Supabase berikut:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Nilai tersebut bisa ditemukan di:
+
+Supabase Dashboard → **Project Settings → API**
+
+---
+
+### 4. Run the Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikasi akan berjalan di:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+finance-tracker
+│
+├── app
+│   ├── login
+│   ├── dashboard
+│   └── api
+│
+├── components
+│
+├── lib
+│   └── supabaseClient.js
+│
+├── styles
+│
+└── README.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Authentication
 
-## Deploy on Vercel
+Aplikasi ini menggunakan **Supabase Authentication** dengan metode login:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Google OAuth**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Saat pengguna login menggunakan Google, Supabase akan otomatis membuat akun pengguna dan menyimpan data user yang diperlukan.
+
+---
+
+## Deployment
+
+Project ini dapat dengan mudah di-deploy menggunakan **Vercel**.
+
+Langkah umum deployment:
+
+1. Push project ke GitHub
+2. Import repository ke Vercel
+3. Tambahkan environment variables Supabase
+4. Deploy aplikasi
+
+---
+
+## Purpose
+
+Project ini dibuat untuk:
+
+* Melatih penggunaan **Next.js**
+* Memahami **authentication menggunakan Supabase**
+* Mengimplementasikan **OAuth login**
+* Membuat aplikasi web sederhana untuk manajemen keuangan
+
+---
+
+## Author
+
+**Eriel Budiman**
+Information Systems Student
+UIN Raden Fatah Palembang
+
+```
+```
