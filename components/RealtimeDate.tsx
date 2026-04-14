@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react';
 
 export default function RealtimeDate() {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     const fetchCurrentTime = async () => {
       try {
         const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta');
@@ -20,7 +23,7 @@ export default function RealtimeDate() {
     fetchCurrentTime();
 
     const interval = setInterval(() => {
-      setCurrentTime(prev => new Date(prev.getTime() + 1000));
+      setCurrentTime(prev => prev ? new Date(prev.getTime() + 1000) : new Date());
     }, 1000);
 
     return () => clearInterval(interval);
@@ -39,6 +42,17 @@ export default function RealtimeDate() {
     };
     return date.toLocaleDateString('id-ID', options);
   };
+
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted || !currentTime) {
+    return (
+      <div className="mt-4 p-4 rounded-xl glass-card border border-indigo-500/30 backdrop-blur-md">
+        <p className="text-sm font-semibold" style={{ color: '#a5b4fc', letterSpacing: '0.5px' }}>
+          📅 Loading...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-4 p-4 rounded-xl glass-card border border-indigo-500/30 backdrop-blur-md">

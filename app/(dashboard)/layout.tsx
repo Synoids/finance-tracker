@@ -8,6 +8,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login');
 
+  // Get user metadata from Google OAuth
+  const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User';
+  const userAvatar = user.user_metadata?.avatar_url;
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
       <Sidebar userEmail={user.email ?? ''} />
@@ -15,11 +19,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
         <header className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
-          <div>
-            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-              Welcome back 👋
-            </p>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
+          <div className="flex items-center gap-3">
+            {userAvatar && (
+              <img
+                src={userAvatar}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            )}
+            <div>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                Welcome back, {userName} 👋
+              </p>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs px-3 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
