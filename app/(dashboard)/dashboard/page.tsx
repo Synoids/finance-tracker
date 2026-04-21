@@ -7,6 +7,10 @@ import {
 import Link from 'next/link';
 import RealtimeDate from '@/components/RealtimeDate';
 
+import { getAccounts } from '@/features/accounts/queries';
+import { TotalBalanceCard } from '@/features/accounts/components/TotalBalanceCard';
+import { AccountsOverview } from '@/features/accounts/components/AccountsOverview';
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -16,6 +20,8 @@ export default async function DashboardPage() {
     .select('*')
     .eq('user_id', user!.id)
     .order('date', { ascending: false });
+
+  const accounts = await getAccounts();
 
   const transactionList = transactions || [];
   const stats = calculateDashboardStats(transactionList);
@@ -66,27 +72,13 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {statCards.map((card, i) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.id}
-              id={card.id}
-              className="glass-card p-6 animate-fade-in-up"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{card.label}</span>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: card.bg }}>
-                  <Icon className="w-5 h-5" style={{ color: card.color }} />
-                </div>
-              </div>
-              <p className="text-3xl font-bold" style={{ color: card.color }}>{card.value}</p>
-            </div>
-          );
-        })}
+      <TotalBalanceCard accounts={accounts} />
+
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Your Accounts</h2>
       </div>
+      
+      <AccountsOverview accounts={accounts} />
 
       {/* Recent Transactions */}
       <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '240ms' }}>

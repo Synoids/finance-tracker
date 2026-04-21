@@ -4,15 +4,15 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabaseClient';
 import { Transaction, INCOME_CATEGORIES, EXPENSE_CATEGORIES } from '@/lib/types';
 import { formatDate, formatCurrency, getCategoryColor } from '@/lib/utils';
-import {
-  Plus, Pencil, Trash2, Search, X, ArrowUpRight, ArrowDownRight, ChevronDown,
-} from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, ArrowUpRight, ArrowDownRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import TransactionForm from '@/components/TransactionForm';
+import TransactionForm from '@/features/transactions/components/TransactionForm';
 import Modal from '@/components/Modal';
+import { Account } from '@/features/accounts/queries';
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [accounts, setAccounts]         = useState<Account[]>([]);
   const [loading, setLoading]           = useState(true);
   const [search, setSearch]             = useState('');
   const [filterType, setFilterType]     = useState<'all' | 'income' | 'expense'>('all');
@@ -27,11 +27,15 @@ export default function TransactionsPage() {
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     const supabase = createClient();
-    const { data } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('date', { ascending: false });
-    setTransactions(data as Transaction[] ?? []);
+    
+    // Fetch both transactions and accounts simultaneously
+    const [{ data: txs }, { data: accs }] = await Promise.all([
+      supabase.from('transactions').select('*').order('date', { ascending: false }),
+      supabase.from('accounts').select('id, name, type, balance')
+    ]);
+
+    setTransactions(txs as Transaction[] ?? []);
+    setAccounts(accs as Account[] ?? []);
     setLoading(false);
   }, []);
 
@@ -212,6 +216,7 @@ export default function TransactionsPage() {
       {editTarget && (
         <Modal title="Edit Transaksi" onClose={() => setEditTarget(null)}>
           <TransactionForm
+            accounts={accounts}
             initial={editTarget}
             onSuccess={() => { setEditTarget(null); fetchTransactions(); }}
             onCancel={() => setEditTarget(null)}

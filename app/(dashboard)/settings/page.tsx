@@ -70,8 +70,8 @@ export default async function SettingsPage() {
         </div>
         <div className="space-y-2">
           {[
-            { label: 'Versi',    value: '1.0.0' },
-            { label: 'Kerangka Kerja', value: 'Next.js 14 App Router' },
+            { label: 'Versi',    value: '2.0.0 (Multi-Account Update)' },
+            { label: 'Kerangka Kerja', value: 'Next.js 16 App Router' },
             { label: 'Basis Data',  value: 'Supabase (PostgreSQL)' },
             { label: 'Otentikasi',      value: 'Supabase Auth' },
           ].map((row) => (
