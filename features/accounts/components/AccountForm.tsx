@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 const schema = z.object({
   name: z.string().min(1, 'Nama akun wajib diisi').max(50),
-  type: z.enum(['cash', 'bank', 'ewallet'], { required_error: 'Tipe akun wajib dipilih' })
+  type: z.enum(['cash', 'bank', 'ewallet'], { message: 'Tipe akun wajib dipilih' })
 });
 
 type FormData = z.infer<typeof schema>;
