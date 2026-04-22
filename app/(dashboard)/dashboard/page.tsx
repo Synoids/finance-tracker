@@ -117,7 +117,9 @@ export default async function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{t.description || t.category}</p>
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t.category} · {formatDate(t.date)}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      {t.category} · {accounts.find(a => a.id === t.account_id)?.name || '—'} · {formatDate(t.date)}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">

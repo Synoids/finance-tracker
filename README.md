@@ -5,15 +5,17 @@ Finance Tracker adalah aplikasi web sederhana untuk membantu pengguna mencatat d
 
 Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.js** dan **Supabase**, serta sebagai bagian dari portfolio pengembangan web.
 
+👉 **[Live Demo: fintrack-id.vercel.app](https://fintrack-id.vercel.app/)**
+
 ---
 
 ## Features
 
 - Login menggunakan **Google Account (OAuth)**
-- Menambahkan data **pemasukan**
-- Menambahkan data **pengeluaran**
-- Melihat daftar transaksi
-- Menghapus transaksi
+- **Multi-Account/Wallet** (V2): Tambah, Edit, dan Hapus sumber dana (Tunai, Bank, E-Wallet)
+- Menambahkan data **pemasukan** dan **pengeluaran**
+- Melihat daftar transaksi (Terhubung otomatis dengan dompet yang digunakan)
+- Edit dan Hapus transaksi
 - Dashboard ringkasan keuangan
 - Autentikasi pengguna menggunakan **Supabase Auth**
 - Penyimpanan data menggunakan **Supabase Database**
@@ -97,16 +99,19 @@ http://localhost:3000
 finance-tracker
 │
 ├── app
-│   ├── login
-│   ├── dashboard
-│   └── api
+│   ├── (auth)
+│   ├── (dashboard)
+│   └── globals.css
 │
+├── features
+│   ├── accounts
+│   ├── transactions
+│   └── shared
 ├── components
 │
 ├── lib
-│   └── supabaseClient.js
-│
-├── styles
+│   ├── supabaseClient.ts
+│   └── supabaseServer.ts
 │
 └── README.md
 ```

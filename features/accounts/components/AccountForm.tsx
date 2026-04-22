@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { createAccount } from '../actions';
+import { createAccount, updateAccount } from '../actions';
 import { useRouter } from 'next/navigation';
 
 const schema = z.object({
@@ -14,23 +14,36 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function AccountForm({ onSuccess, onCancel }: { onSuccess?: () => void, onCancel?: () => void }) {
+export default function AccountForm({ 
+  onSuccess, 
+  onCancel,
+  initialData,
+  accountId
+}: { 
+  onSuccess?: () => void, 
+  onCancel?: () => void,
+  initialData?: FormData,
+  accountId?: string
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { type: 'cash' }
+    defaultValues: initialData || { type: 'cash' }
   });
 
   async function onSubmit(data: FormData) {
     setLoading(true);
     setError('');
 
-    const result = await createAccount(data);
+    const result = accountId 
+      ? await updateAccount(accountId, data)
+      : await createAccount(data);
+      
     if (!result.success) {
-      setError(result.error || 'Terjadi kesalahan saat membuat akun');
+      setError(result.error || 'Terjadi kesalahan saat menyimpan akun');
       setLoading(false);
       return;
     }
@@ -73,7 +86,7 @@ export default function AccountForm({ onSuccess, onCancel }: { onSuccess?: () =>
       <div className="flex gap-3 pt-4">
         {onCancel && <button type="button" onClick={onCancel} className="btn-secondary flex-1">Batal</button>}
         <button type="submit" disabled={loading} className="btn-primary flex-1">
-          {loading ? 'Menyimpan...' : 'Tambah Akun'}
+          {loading ? 'Menyimpan...' : accountId ? 'Simpan Perubahan' : 'Tambah Akun'}
         </button>
       </div>
     </form>

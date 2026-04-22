@@ -148,7 +148,7 @@ export default function TransactionsPage() {
             <table className="w-full">
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                  {['Tanggal', 'Kategori', 'Deskripsi', 'Jenis', 'Jumlah', 'Aksi'].map((h) => (
+                  {['Tanggal', 'Kategori', 'Deskripsi', 'Akun', 'Jenis', 'Jumlah', 'Aksi'].map((h) => (
                     <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)', background: 'var(--bg-secondary)' }}>
                       {h}
                     </th>
@@ -171,6 +171,9 @@ export default function TransactionsPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-sm max-w-[160px] truncate" style={{ color: 'var(--text-primary)' }}>{t.description || '—'}</td>
+                    <td className="px-5 py-3.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      {accounts.find(a => a.id === t.account_id)?.name || '—'}
+                    </td>
                     <td className="px-5 py-3.5">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${t.type === 'income' ? 'income-badge' : 'expense-badge'}`}>
                         {t.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
