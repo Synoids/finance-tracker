@@ -176,6 +176,20 @@ export default function TransactionForm({ accounts, initial, onSuccess, onCancel
           </div>
         </div>
 
+        {/* Description */}
+        <div>
+          <label className="label">Deskripsi</label>
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4 flex-shrink-0 text-[var(--text-muted)]" />
+            <input 
+              {...register('description')} 
+              type="text" 
+              className="input-field flex-1" 
+              placeholder="Catatan tambahan (opsional)"
+            />
+          </div>
+        </div>
+
         {/* Actions */}
         <div className="flex gap-3 pt-2">
           {onCancel && <button type="button" onClick={onCancel} className="btn-secondary flex-1">Batal</button>}
