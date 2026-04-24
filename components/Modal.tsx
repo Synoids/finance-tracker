@@ -21,7 +21,7 @@ export default function Modal({ title, children, onClose }: ModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
       <div className="w-full max-w-md animate-fade-in-up">
-        <div className="glass-card p-6">
+        <div className="glass-card p-5 sm:p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</h2>

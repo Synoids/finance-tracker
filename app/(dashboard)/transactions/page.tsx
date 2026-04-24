@@ -79,13 +79,18 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Transaksi</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{filtered.length} transaksi</p>
         </div>
-        <Link href="/transactions/new" id="new-transaction-btn" className="btn-primary flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Tambah Transaksi
+        <Link 
+          href="/transactions/new" 
+          id="new-transaction-btn" 
+          className="btn-primary w-full sm:w-auto h-11 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
+        >
+          <Plus className="w-4 h-4" /> 
+          <span>Tambah Transaksi</span>
         </Link>
       </div>
 

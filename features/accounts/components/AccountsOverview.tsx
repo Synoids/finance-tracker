@@ -48,7 +48,7 @@ export function AccountsOverview({ accounts }: { accounts: Account[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
         {accounts.map((acc) => (
           <div key={acc.id} className="glass-card p-6 transition-all hover:border-[var(--text-muted)] group">
             <div className="flex justify-between items-center mb-4">
