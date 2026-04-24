@@ -9,6 +9,8 @@ import Link from 'next/link';
 import TransactionForm from '@/features/transactions/components/TransactionForm';
 import Modal from '@/components/Modal';
 import { Account } from '@/features/accounts/queries';
+import EmptyState from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -131,18 +133,29 @@ export default function TransactionsPage() {
       {/* Table */}
       <div className="glass-card overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <span className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="p-6 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-14">
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tidak ada transaksi ditemukan.</p>
-            {hasFilters && (
-              <button onClick={clearFilters} className="mt-2 text-xs" style={{ color: '#a5b4fc', background: 'none', border: 'none', cursor: 'pointer' }}>
-                Hapus filter
+          <EmptyState
+            icon={Search}
+            title={hasFilters ? "Tidak ada transaksi ditemukan" : "Belum ada transaksi"}
+            description={hasFilters 
+              ? "Coba sesuaikan filter atau pencarian Anda untuk menemukan data yang diinginkan." 
+              : "Mulai catat pengeluaran atau pemasukan pertama Anda untuk memantau keuangan."}
+            action={hasFilters ? (
+              <button 
+                onClick={clearFilters} 
+                className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                Hapus filter & tampilkan semua
               </button>
-            )}
-          </div>
+            ) : null}
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">

@@ -1,9 +1,12 @@
 import { createClient } from '@/lib/supabaseServer';
 import { User, Shield, Bell } from 'lucide-react';
+import { getDailyLimit } from '@/features/settings/queries';
+import SettingsForm from '@/features/settings/components/SettingsForm';
 
 export default async function SettingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  const dailyLimit = await getDailyLimit();
 
   const createdAt = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -47,6 +50,9 @@ export default async function SettingsPage() {
         </div>
       </div>
 
+      {/* Daily Limit Settings */}
+      <SettingsForm initialLimit={dailyLimit} />
+
       {/* Security */}
       <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <div className="flex items-center gap-3 mb-5">
@@ -70,7 +76,7 @@ export default async function SettingsPage() {
         </div>
         <div className="space-y-2">
           {[
-            { label: 'Versi',    value: '2.0.0 (Multi-Account Update)' },
+            { label: 'Versi',    value: '3.0.0 (Financial Control & UI Polish)' },
             { label: 'Kerangka Kerja', value: 'Next.js 16 App Router' },
             { label: 'Basis Data',  value: 'Supabase (PostgreSQL)' },
             { label: 'Otentikasi',      value: 'Supabase Auth' },

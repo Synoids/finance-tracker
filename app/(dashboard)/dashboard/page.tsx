@@ -10,6 +10,11 @@ import RealtimeDate from '@/components/RealtimeDate';
 import { getAccounts } from '@/features/accounts/queries';
 import { TotalBalanceCard } from '@/features/accounts/components/TotalBalanceCard';
 import { AccountsOverview } from '@/features/accounts/components/AccountsOverview';
+import { getBudgetsByMonth, getExpensesByCategory } from '@/features/budgets/queries';
+import BudgetForm from '@/features/budgets/components/BudgetForm';
+import BudgetList from '@/features/budgets/components/BudgetList';
+import { getTodayExpense, getDailyLimit } from '@/features/settings/queries';
+import DailyLimitProgress from '@/features/settings/components/DailyLimitProgress';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -22,6 +27,19 @@ export default async function DashboardPage() {
     .order('date', { ascending: false });
 
   const accounts = await getAccounts();
+  const currentMonthStr = new Date().toISOString().split('T')[0].slice(0, 8) + '01';
+  
+  const [budgets, expenses, todayExpense, dailyLimit] = await Promise.all([
+    getBudgetsByMonth(currentMonthStr),
+    getExpensesByCategory(currentMonthStr),
+    getTodayExpense(),
+    getDailyLimit()
+  ]);
+
+  const budgetsWithProgress = budgets.map((b) => ({
+    ...b,
+    spent: expenses[b.category] || 0,
+  }));
 
   const transactionList = transactions || [];
   const stats = calculateDashboardStats(transactionList);
@@ -74,11 +92,27 @@ export default async function DashboardPage() {
       {/* Stat Cards */}
       <TotalBalanceCard accounts={accounts} />
 
+      {/* Daily Limit Tracker */}
+      <DailyLimitProgress totalToday={todayExpense} dailyLimit={dailyLimit} />
+
       <div className="mb-4">
         <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Your Accounts</h2>
       </div>
       
       <AccountsOverview accounts={accounts} />
+
+      {/* Monthly Budgets Section */}
+      <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Anggaran Bulan Ini</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-2">
+            <BudgetForm />
+          </div>
+          <div className="lg:col-span-3">
+            <BudgetList budgets={budgetsWithProgress} />
+          </div>
+        </div>
+      </div>
 
       {/* Recent Transactions */}
       <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '240ms' }}>

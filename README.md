@@ -13,12 +13,15 @@ Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.
 
 - Login menggunakan **Google Account (OAuth)**
 - **Multi-Account/Wallet** (V2): Tambah, Edit, dan Hapus sumber dana (Tunai, Bank, E-Wallet)
-- Menambahkan data **pemasukan** dan **pengeluaran**
+- **Budgeting System** (V3): Atur anggaran bulanan per kategori dan pantau progres pengeluaran secara real-time
+- **Daily Spending Limit** (V3): Pasang batas belanja harian untuk kontrol keuangan yang lebih ketat
+- **Premium UI/UX** (V3): Menggunakan Skeleton loaders, Empty states, dan Sonner notifications untuk pengalaman pengguna yang lebih mulus
+- Menambahkan data **pemasukan** dan **pengeluaran** dengan fitur eksklusi limit harian
 - Melihat daftar transaksi (Terhubung otomatis dengan dompet yang digunakan)
 - Edit dan Hapus transaksi
-- Dashboard ringkasan keuangan
+- Dashboard ringkasan keuangan interaktif
 - Autentikasi pengguna menggunakan **Supabase Auth**
-- Penyimpanan data menggunakan **Supabase Database**
+- Penyimpanan data menggunakan **Supabase Database** dengan RLS (Row Level Security) aktif
 
 ---
 
@@ -106,6 +109,8 @@ finance-tracker
 ├── features
 │   ├── accounts
 │   ├── transactions
+│   ├── budgets
+│   ├── settings
 │   └── shared
 ├── components
 │

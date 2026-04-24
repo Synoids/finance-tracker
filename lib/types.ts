@@ -8,6 +8,7 @@ export interface Transaction {
   type: TransactionType;
   category: string;
   description: string;
+  exclude_from_daily_limit: boolean;
   date: string; // ISO date string YYYY-MM-DD
   created_at: string;
 }
@@ -56,4 +57,13 @@ export interface MonthlyComparison {
   month: string;
   income: number;
   expense: number;
+}
+
+export interface Budget {
+  id: string;
+  user_id: string;
+  category: string;
+  amount: number;
+  month: string; // ISO date string YYYY-MM-DD
+  created_at: string;
 }

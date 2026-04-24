@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Landmark, Smartphone, Wallet, Plus, Edit2, Trash2 } from "lucide-react";
 import { Account } from "../queries";
-import { EmptyState } from "@/features/shared/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import { formatNumber } from "@/lib/utils";
 import Modal from "@/components/Modal";
 import AccountForm from "./AccountForm";
