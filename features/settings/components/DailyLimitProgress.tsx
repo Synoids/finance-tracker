@@ -1,5 +1,6 @@
 import { formatCurrency, cn } from "@/lib/utils";
 import { Zap, AlertTriangle, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 interface DailyLimitProgressProps {
   totalToday: number;
@@ -69,13 +70,18 @@ export default function DailyLimitProgress({ totalToday, dailyLimit }: DailyLimi
           />
         </div>
 
-        <div className="flex items-center gap-2 pt-1">
-          <Icon className={cn("w-4 h-4", textColor)} />
-          <p className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>
-            {isOverLimit 
-              ? "Waspada! Anda telah mencapai limit hari ini." 
-              : `Anda memiliki ${formatCurrency(dailyLimit - totalToday)} sisa kuota belanja hari ini.`}
-          </p>
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-[var(--border)] mt-4">
+          <div className="flex items-center gap-2">
+            <Icon className={cn("w-3.5 h-3.5", textColor)} />
+            <p className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+              {isOverLimit 
+                ? "Waspada! Limit tercapai." 
+                : `${formatCurrency(dailyLimit - totalToday)} lagi.`}
+            </p>
+          </div>
+          <Link href="/settings" className="text-[10px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
+            Ubah Limit di Pengaturan →
+          </Link>
         </div>
       </div>
     </div>
