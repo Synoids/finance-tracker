@@ -1,0 +1,60 @@
+name: Keep Supabase Database Active
+
+on:
+  schedule:
+    # Jalankan setiap 6 hari sekali pada pukul 00:00 UTC
+    # Cron: menit jam hari bulan hari-dalam-seminggu
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: # Memungkinkan trigger manual
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+
+      - name: Ping Supabase Database
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY
+          );
+          
+          (async () => {
+            try {
+              // Ping database dengan query sederhana
+              const { data, error } = await supabase
+                .from('_keep_alive')
+                .select('*')
+                .limit(1);
+              
+              if (error && error.code !== 'PGRST116') {
+                // PGRST116 = table tidak ditemukan, itu OK
+                console.log('Ping successful - Error yang diharapkan:', error.message);
+              } else {
+                console.log('Ping successful:', new Date().toISOString());
+              }
+            } catch (err) {
+              console.log('Ping completed:', err.message);
+            }
+          })();
+          "
+
+      - name: Log completion
+        run: echo "Database ping completed at $(date)"
