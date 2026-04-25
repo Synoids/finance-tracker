@@ -1,5 +1,5 @@
 import { format, parseISO } from 'date-fns';
-import { Transaction, CategoryStat, MonthlyComparison, DashboardStats } from './types';
+import { Transaction, CategoryStat, MonthlyComparison, DashboardStats, TimeRange } from './types';
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
 
