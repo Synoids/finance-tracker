@@ -32,7 +32,7 @@ export default function DailyLimitProgress({ totalToday, dailyLimit }: DailyLimi
   }
 
   return (
-    <div className="glass-card p-6 animate-fade-in-up">
+    <div className="glass-card p-5 md:p-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={cn("p-2 rounded-xl", bgIcon)}>

@@ -2,41 +2,86 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabaseClient';
-import { Transaction } from '@/lib/types';
-import { groupByCategory, groupByMonth, formatCurrency } from '@/lib/utils';
+import { Transaction, TimeRange } from '@/lib/types';
+import { groupByCategory, groupByMonth, formatCurrency, filterTransactionsByRange, groupByDay, calculateSpendingForecast } from '@/lib/utils';
 import ExpensesPieChart from '@/components/Charts/ExpensesPieChart';
 import IncomeExpenseBarChart from '@/components/Charts/IncomeExpenseBarChart';
-import { BarChart3, PieChart, TrendingUp } from 'lucide-react';
+import CashFlowLineChart from '@/components/Charts/CashFlowLineChart';
+import ForecastCard from '@/features/analytics/components/ForecastCard';
+import { getBudgetsByMonth } from '@/features/budgets/queries';
+import { BarChart3, PieChart, TrendingUp, Calendar, LineChart } from 'lucide-react';
 
 export default function AnalyticsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [range, setRange] = useState<TimeRange>('month');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const supabase = createClient();
-      const { data } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('date', { ascending: false });
-      setTransactions(data as Transaction[] ?? []);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const currentMonthStr = new Date().toISOString().split('T')[0].slice(0, 8) + '01';
+
+      const [txRes, budgetRes] = await Promise.all([
+        supabase.from('transactions').select('*').order('date', { ascending: false }),
+        supabase.from('budgets').select('amount').eq('month', currentMonthStr).eq('user_id', user.id)
+      ]);
+
+      setTransactions(txRes.data as Transaction[] ?? []);
+      
+      const totalB = (budgetRes.data as { amount: number }[] || []).reduce((sum, b) => sum + Number(b.amount), 0);
+      setTotalBudget(totalB);
+      
       setLoading(false);
     }
     load();
   }, []);
 
-  const categoryStats = groupByCategory(transactions);
-  const monthlyStats  = groupByMonth(transactions);
+  const filteredTransactions = filterTransactionsByRange(transactions, range);
+  const categoryStats = groupByCategory(filteredTransactions);
+  const monthlyStats  = groupByMonth(filteredTransactions);
+  const dailyStats    = groupByDay(filteredTransactions);
 
-  const totalIncome  = transactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-  const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const totalIncome  = filteredTransactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpense = filteredTransactions.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const savingsRate  = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0;
+
+  const RANGES: { value: TimeRange; label: string }[] = [
+    { value: '7days', label: '7 Hari' },
+    { value: 'month', label: 'Bulan Ini' },
+    { value: 'year', label: 'Tahun Ini' },
+    { value: 'all', label: 'Semua' },
+  ];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Analitik</h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Ringkasan visual aktivitas keuangan Anda</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Analitik</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Ringkasan visual aktivitas keuangan Anda</p>
+        </div>
+
+        {/* Time Filter Tabs */}
+        <div className="flex p-1 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)] self-start sm:self-center overflow-x-auto max-w-full no-scrollbar">
+          <div className="flex flex-nowrap gap-1">
+            {RANGES.map((r) => (
+              <button
+                key={r.value}
+                onClick={() => setRange(r.value)}
+                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all whitespace-nowrap ${
+                  range === r.value 
+                  ? 'bg-indigo-600 text-white shadow-md' 
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -62,6 +107,30 @@ export default function AnalyticsPage() {
                 <p className="text-2xl font-bold" style={{ color: s.color }}>{s.val}</p>
               </div>
             ))}
+          </div>
+
+          {/* Forecast Card - Only for Month range */}
+          {range === 'month' && (
+            <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+              <ForecastCard 
+                currentExpenses={totalExpense} 
+                totalBudget={totalBudget} 
+                forecast={calculateSpendingForecast(filteredTransactions, totalExpense, totalBudget)} 
+              />
+            </div>
+          )}
+
+          {/* Cash Flow Chart */}
+          <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            <div className="flex items-center gap-2 mb-6">
+              <LineChart className="w-4 h-4" style={{ color: '#a5b4fc' }} />
+              <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Tren Arus Kas (Saldo Kumulatif)</h2>
+            </div>
+            {dailyStats.length === 0 ? (
+              <p className="text-sm text-center py-12" style={{ color: 'var(--text-muted)' }}>Tidak ada data harian untuk periode ini</p>
+            ) : (
+              <CashFlowLineChart data={dailyStats} />
+            )}
           </div>
 
           {/* Charts row */}

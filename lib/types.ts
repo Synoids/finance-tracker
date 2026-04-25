@@ -1,4 +1,5 @@
 export type TransactionType = 'income' | 'expense';
+export type TimeRange = '7days' | 'month' | 'year' | 'all';
 
 export interface Transaction {
   id: string;
@@ -35,6 +36,7 @@ export const EXPENSE_CATEGORIES = [
   'Pendidikan',
   'Perjalanan',
   'Sewa & Perumahan',
+  'Tabungan',
   'Pengeluaran Lain',
 ] as const;
 
@@ -66,4 +68,23 @@ export interface Budget {
   amount: number;
   month: string; // ISO date string YYYY-MM-DD
   created_at: string;
+}
+
+export interface Goal {
+  id: string;
+  user_id: string;
+  name: string;
+  target_amount: number;
+  current_amount: number;
+  category: string | null;
+  deadline: string | null;
+  status: 'active' | 'completed';
+  created_at: string;
+}
+
+export interface Insight {
+  type: 'success' | 'warning' | 'info' | 'danger';
+  title: string;
+  description: string;
+  icon: string;
 }

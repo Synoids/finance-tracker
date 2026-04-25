@@ -15,7 +15,12 @@ Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.
 - **Multi-Account/Wallet** (V2): Tambah, Edit, dan Hapus sumber dana (Tunai, Bank, E-Wallet)
 - **Budgeting System** (V3): Atur anggaran bulanan per kategori dan pantau progres pengeluaran secara real-time
 - **Daily Spending Limit** (V3): Pasang batas belanja harian untuk kontrol keuangan yang lebih ketat
-- **Premium UI/UX** (V3): Menggunakan Skeleton loaders, Empty states, dan Sonner notifications untuk pengalaman pengguna yang lebih mulus
+- **Financial Goals** (V4): Sistem target menabung cerdas dengan fitur *Ambil/Isi Celengan* yang sinkron dengan saldo akun
+- **Advanced Analytics** (V4): Visualisasi data mendalam dengan *Interactive Time Filtering* (7 Hari, Bulan, Tahun)
+- **Cash Flow Trend** (V4): Grafik area interaktif untuk memantau saldo kumulatif harian (Arus Kas)
+- **AI Smart Insights** (V4): Analisis otomatis untuk mendeteksi pemborosan, kategori belanja terbesar, dan progres budget
+- **Spending Forecast** (V4): Prediksi pengeluaran akhir bulan menggunakan algoritma *weighted-average* dan deteksi tren belanja
+- **Premium UI/UX** (V3/V4): Glassmorphism design, mobile-optimized layouts, Skeleton loaders, dan Sonner notifications
 - Menambahkan data **pemasukan** dan **pengeluaran** dengan fitur eksklusi limit harian
 - Melihat daftar transaksi (Terhubung otomatis dengan dompet yang digunakan)
 - Edit dan Hapus transaksi

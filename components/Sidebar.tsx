@@ -11,12 +11,14 @@ import {
   TrendingUp,
   LogOut,
   X,
+  PiggyBank,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
   { href: '/dashboard',     label: 'Dasbor',     icon: LayoutDashboard },
   { href: '/transactions',  label: 'Transaksi',  icon: ArrowLeftRight },
+  { href: '/goals',         label: 'Target Menabung', icon: PiggyBank },
   { href: '/analytics',     label: 'Analitik',     icon: BarChart3 },
   { href: '/settings',      label: 'Pengaturan',      icon: Settings },
 ];

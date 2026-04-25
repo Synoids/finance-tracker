@@ -29,7 +29,7 @@ export default function DashboardShell({
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center justify-between px-4 md:px-6 py-4 flex-shrink-0" style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
+        <header className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 flex-shrink-0" style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}

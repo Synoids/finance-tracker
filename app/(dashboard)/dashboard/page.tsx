@@ -15,6 +15,8 @@ import BudgetForm from '@/features/budgets/components/BudgetForm';
 import BudgetList from '@/features/budgets/components/BudgetList';
 import { getTodayExpense, getDailyLimit } from '@/features/settings/queries';
 import DailyLimitProgress from '@/features/settings/components/DailyLimitProgress';
+import { getFinancialInsights } from '@/features/insights/service';
+import InsightCard from '@/features/insights/components/InsightCard';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -29,11 +31,12 @@ export default async function DashboardPage() {
   const accounts = await getAccounts();
   const currentMonthStr = new Date().toISOString().split('T')[0].slice(0, 8) + '01';
   
-  const [budgets, expenses, todayExpense, dailyLimit] = await Promise.all([
+  const [budgets, expenses, todayExpense, dailyLimit, insights] = await Promise.all([
     getBudgetsByMonth(currentMonthStr),
     getExpensesByCategory(currentMonthStr),
     getTodayExpense(),
-    getDailyLimit()
+    getDailyLimit(),
+    getFinancialInsights()
   ]);
 
   const budgetsWithProgress = budgets.map((b) => ({
@@ -97,8 +100,15 @@ export default async function DashboardPage() {
       {/* Stat Cards */}
       <TotalBalanceCard accounts={accounts} />
 
-      {/* Daily Limit Tracker */}
-      <DailyLimitProgress totalToday={todayExpense} dailyLimit={dailyLimit} />
+      {/* Main Analysis Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <DailyLimitProgress totalToday={todayExpense} dailyLimit={dailyLimit} />
+        </div>
+        <div className="lg:col-span-1">
+          <InsightCard insights={insights} />
+        </div>
+      </div>
 
       <div className="mb-4">
         <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Your Accounts</h2>
@@ -144,30 +154,29 @@ export default async function DashboardPage() {
             {recent.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center justify-between p-3 rounded-xl transition-colors"
+                className="flex items-center justify-between p-2.5 md:p-3 rounded-xl transition-colors"
                 style={{ background: 'var(--bg-secondary)' }}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 md:gap-3 min-w-0">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                    className="w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[10px] md:text-xs font-bold"
                     style={{ background: getCategoryColor(t.category) + '22', color: getCategoryColor(t.category) }}
                   >
                     {t.category.charAt(0)}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{t.description || t.category}</p>
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                      {t.category} · {accounts.find(a => a.id === t.account_id)?.name || '—'} · {formatDate(t.date)}
+                  <div className="min-w-0">
+                    <p className="text-xs md:text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{t.description || t.category}</p>
+                    <p className="text-[10px] md:text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                      {t.category} · {formatDate(t.date)}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold flex items-center gap-1" style={{ color: t.type === 'income' ? '#22c55e' : '#ef4444' }}>
-                    {t.type === 'income' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                    {formatCurrency(t.amount)}
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xs md:text-sm font-semibold flex items-center justify-end gap-0.5" style={{ color: t.type === 'income' ? '#22c55e' : '#ef4444' }}>
+                    {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                   </p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${t.type === 'income' ? 'income-badge' : 'expense-badge'}`}>
-                    {t.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
+                  <span className={`text-[9px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full ${t.type === 'income' ? 'income-badge' : 'expense-badge'}`}>
+                    {t.type === 'income' ? 'Masuk' : 'Keluar'}
                   </span>
                 </div>
               </div>
