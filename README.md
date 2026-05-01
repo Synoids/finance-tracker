@@ -21,6 +21,9 @@ Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.
 - **AI Smart Insights** (V4): Analisis otomatis untuk mendeteksi pemborosan, kategori belanja terbesar, dan progres budget
 - **Spending Forecast** (V4): Prediksi pengeluaran akhir bulan menggunakan algoritma *weighted-average* dan deteksi tren belanja
 - **Premium UI/UX** (V3/V4): Glassmorphism design, mobile-optimized layouts, Skeleton loaders, dan Sonner notifications
+- **Mobile-First Navigation**: Menggunakan statis bottom navigation bar untuk mempermudah akses pada layar sentuh.
+- **Progressive Web App (PWA) Support**: Dapat di-install di Homescreen perangkat mobile dengan logo kustom (iOS/Android)
+- **Global Loading State**: Menggunakan `nextjs-toploader` untuk transisi halaman yang lebih interaktif
 - Menambahkan data **pemasukan** dan **pengeluaran** dengan fitur eksklusi limit harian
 - Melihat daftar transaksi (Terhubung otomatis dengan dompet yang digunakan)
 - Edit dan Hapus transaksi

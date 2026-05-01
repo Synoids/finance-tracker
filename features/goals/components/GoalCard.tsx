@@ -21,6 +21,7 @@ export default function GoalCard({ goal, accounts }: GoalCardProps) {
   const [shouldDeduct, setShouldDeduct] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id || "");
   const [mode, setMode] = useState<'add' | 'withdraw'>('add');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const progress = Math.min(Math.round((goal.current_amount / goal.target_amount) * 100), 100);
   const remaining = Math.max(goal.target_amount - goal.current_amount, 0);
@@ -68,11 +69,13 @@ export default function GoalCard({ goal, accounts }: GoalCardProps) {
   async function handleDelete() {
     if (!confirm("Apakah Anda yakin ingin menghapus target ini?")) return;
     
+    setIsDeleting(true);
     try {
       await deleteGoal(goal.id);
       toast.success("Target berhasil dihapus");
     } catch (error) {
       toast.error("Gagal menghapus target");
+      setIsDeleting(false);
     }
   }
 
@@ -91,9 +94,10 @@ export default function GoalCard({ goal, accounts }: GoalCardProps) {
         </div>
         <button 
           onClick={handleDelete}
-          className="p-2 rounded-lg hover:bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+          disabled={isDeleting}
+          className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors disabled:opacity-50"
         >
-          <Trash2 className="w-4 h-4" />
+          {isDeleting ? <span className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin inline-block" /> : <Trash2 className="w-4 h-4" />}
         </button>
       </div>
 

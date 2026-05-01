@@ -23,13 +23,13 @@ const NAV_ITEMS = [
   { href: '/settings',      label: 'Pengaturan',      icon: Settings },
 ];
 
+export { NAV_ITEMS };
+
 interface SidebarProps {
   userEmail: string;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export default function Sidebar({ userEmail, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
 
@@ -42,20 +42,8 @@ export default function Sidebar({ userEmail, isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Backdrop for mobile */}
-      <div 
-        className={cn(
-          "fixed inset-0 bg-black/50 z-40 transition-opacity lg:hidden",
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        )}
-        onClick={onClose}
-      />
-
       <aside
-        className={cn(
-          "fixed lg:static inset-y-0 left-0 w-64 bg-[var(--bg-secondary)] border-r border-[var(--border)] z-50 transform transition-transform duration-300 lg:translate-x-0 flex flex-col p-4 h-full",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}
+        className="hidden lg:flex static inset-y-0 left-0 w-64 bg-[var(--bg-secondary)] border-r border-[var(--border)] z-50 flex-col p-4 h-full"
       >
         {/* Header/Logo */}
         <div className="flex items-center justify-between mb-6 px-2 py-4">
@@ -69,12 +57,7 @@ export default function Sidebar({ userEmail, isOpen, onClose }: SidebarProps) {
             </div>
           </div>
           
-          <button 
-            onClick={onClose}
-            className="p-2 lg:hidden rounded-lg hover:bg-[var(--bg-card)] transition-colors"
-          >
-            <X className="w-5 h-5 text-[var(--text-secondary)]" />
-          </button>
+
         </div>
 
         {/* Navigation */}
@@ -88,7 +71,6 @@ export default function Sidebar({ userEmail, isOpen, onClose }: SidebarProps) {
               <Link
                 key={href}
                 href={href}
-                onClick={onClose}
                 id={`nav-${label.toLowerCase()}`}
                 className={cn(
                   "sidebar-link",

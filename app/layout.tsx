@@ -14,10 +14,18 @@ export const metadata: Metadata = {
   },
 };
 
+import NextTopLoader from 'nextjs-toploader';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
       <body className={inter.className}>
+        <NextTopLoader 
+          color="#6366f1" 
+          showSpinner={false} 
+          shadow="0 0 10px #6366f1,0 0 5px #6366f1" 
+          height={3}
+        />
         {children}
         <Toaster position="top-center" richColors theme="dark" />
       </body>

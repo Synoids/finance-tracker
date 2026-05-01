@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
-import { Menu } from 'lucide-react';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -17,28 +16,15 @@ export default function DashboardShell({
   userName, 
   userAvatar 
 }: DashboardShellProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
-      <Sidebar 
-        userEmail={userEmail} 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
-      />
+      <Sidebar userEmail={userEmail} />
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
         <header className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 flex-shrink-0" style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setIsSidebarOpen(true)}
-              className="p-2 lg:hidden rounded-lg hover:bg-[var(--bg-card)] transition-colors"
-              aria-label="Open sidebar"
-            >
-              <Menu className="w-5 h-5 text-[var(--text-secondary)]" />
-            </button>
-
             {userAvatar && (
               <img
                 src={userAvatar}
@@ -61,11 +47,13 @@ export default function DashboardShell({
         </header>
 
         {/* Main scrollable content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 lg:pb-6">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </main>
+        
+        <MobileBottomNav />
       </div>
     </div>
   );
