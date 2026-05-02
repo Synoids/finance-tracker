@@ -77,11 +77,12 @@ export default function AIChatWidget() {
 
       {/* Chat Window */}
       <div className={cn(
-        "fixed bottom-40 lg:bottom-24 right-6 z-[60] w-[calc(100%-3rem)] sm:w-[400px] max-h-[500px] rounded-3xl glass-card flex flex-col shadow-2xl transition-all duration-500 origin-bottom-right border border-white/10",
+        "fixed bottom-40 lg:bottom-24 right-6 z-[60] w-[calc(100%-3rem)] sm:w-[400px] max-h-[500px] rounded-3xl flex flex-col shadow-2xl transition-all duration-500 origin-bottom-right border border-white/10",
+        "bg-[var(--bg-secondary)]/95 backdrop-blur-2xl", // Increased opacity to 95%
         isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-90 opacity-0 translate-y-10 pointer-events-none"
       )}>
         {/* Header */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5 rounded-t-3xl">
+        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/10 rounded-t-3xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center animate-pulse-glow">
               <Sparkles className="w-5 h-5 text-white" />
@@ -112,7 +113,7 @@ export default function AIChatWidget() {
               <div className={cn(
                 "max-w-[85%] p-3.5 rounded-2xl text-[13px] leading-relaxed shadow-sm",
                 m.role === 'assistant'
-                  ? "bg-white/5 text-[var(--text-primary)] rounded-tl-none border border-white/10"
+                  ? "bg-white/10 text-[var(--text-primary)] rounded-tl-none border border-white/10"
                   : "bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/20"
               )}>
                 {m.content.split('\n').map((line, j) => {

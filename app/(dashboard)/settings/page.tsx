@@ -76,7 +76,7 @@ export default async function SettingsPage() {
         </div>
         <div className="space-y-2">
           {[
-            { label: 'Versi',    value: '4.0.0 (Advanced Analytics & Goals)' },
+            { label: 'Versi',    value: '5.0.0 (AI Assistant & Premium UI)' },
             { label: 'Kerangka Kerja', value: 'Next.js 16 App Router' },
             { label: 'Basis Data',  value: 'Supabase (PostgreSQL)' },
             { label: 'Otentikasi',      value: 'Supabase Auth' },

@@ -9,6 +9,27 @@ Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.
 
 ---
 
+## ✨ What's New? (Mei 2026)
+
+Kami baru saja melakukan pembaruan besar-besaran untuk memberikan pengalaman pengelolaan keuangan yang lebih cerdas dan modern:
+
+### 🤖 AI Chat Assistant (Gemini Powered)
+- **Financial Consulting**: Tanya jawab langsung tentang kondisi keuanganmu.
+- **Context Aware**: AI memahami data transaksi dan budget kamu untuk memberikan saran personal.
+- **Natural Language**: Ngobrol santai layaknya punya asisten keuangan pribadi.
+
+### 📱 Mobile-First Navigation 2.0
+- **Floating Action Button (FAB)**: Akses cepat tambah transaksi di tengah navigasi.
+- **Static Bottom Nav**: Navigasi ala aplikasi mobile premium.
+- **Quick Settings**: Akses pengaturan langsung dari header mobile.
+
+### 💎 Premium Design System
+- **Dynamic Mesh Background**: Latar belakang bergerak yang elegan.
+- **Enhanced Glassmorphism**: Efek kartu transparan yang lebih dalam dan modern.
+- **Glow & Animation**: Sentuhan efek cahaya (glow) pada komponen cerdas.
+
+---
+
 ## Features
 
 - Login menggunakan **Google Account (OAuth)**
@@ -37,11 +58,11 @@ Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.
 
 Project ini dibangun menggunakan teknologi berikut:
 
-- **Next.js** – React framework untuk membangun aplikasi web modern
+- **Next.js 16** – React framework dengan Turbopack (Latest Version)
 - **Supabase** – Backend as a Service untuk authentication dan database
-- **Google OAuth** – Sistem login menggunakan akun Google
-- **Tailwind CSS** – Styling dan desain antarmuka
-- **Vercel** – Platform deployment untuk aplikasi web
+- **Google Gemini API** – Otak AI untuk fitur finansial konsultasi
+- **Tailwind CSS v4** – Desain antarmuka modern dan super cepat
+- **Vercel** – Platform deployment global
 
 ---
 
