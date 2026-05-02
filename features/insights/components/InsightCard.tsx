@@ -28,7 +28,7 @@ export default function InsightCard({ insights }: InsightCardProps) {
   return (
     <div className="glass-card p-5 md:p-6 h-full flex flex-col">
       <div className="flex items-center gap-2 mb-4 md:mb-6">
-        <div className="p-2 rounded-lg bg-indigo-500/10">
+        <div className="p-2 rounded-lg bg-indigo-500/10 animate-pulse-glow">
           <Zap className="w-4 h-4 text-indigo-400" />
         </div>
         <h2 className="text-base md:text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Smart Insights</h2>

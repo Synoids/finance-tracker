@@ -2,6 +2,9 @@
 
 import Sidebar from '@/components/Sidebar';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import Link from 'next/link';
+import { Settings } from 'lucide-react';
+import AIChatWidget from '@/components/AIChatWidget';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -39,10 +42,17 @@ export default function DashboardShell({
               <p className="text-xs hidden xs:block" style={{ color: 'var(--text-muted)' }}>{userEmail}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] sm:text-xs px-2 sm:py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
               ● Live
             </span>
+            <Link 
+              href="/settings" 
+              className="p-2 rounded-xl transition-colors hover:bg-[var(--bg-card)] lg:hidden"
+              title="Settings"
+            >
+              <Settings className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+            </Link>
           </div>
         </header>
 
@@ -54,6 +64,7 @@ export default function DashboardShell({
         </main>
         
         <MobileBottomNav />
+        <AIChatWidget />
       </div>
     </div>
   );

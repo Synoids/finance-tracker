@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id">
       <body className={inter.className}>
+        <div className="mesh-bg" />
         <NextTopLoader 
           color="#6366f1" 
           showSpinner={false} 
