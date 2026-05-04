@@ -1,196 +1,96 @@
-````markdown
-# Finance Tracker
+# FinanceFlow AI 🚀
 
-Finance Tracker adalah aplikasi web sederhana untuk membantu pengguna mencatat dan memantau kondisi keuangan pribadi. Aplikasi ini memungkinkan pengguna mencatat pemasukan dan pengeluaran sehingga dapat melihat ringkasan keuangan dengan lebih mudah.
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.3-black?logo=next.js)](https://nextjs.org/)
+[![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini_2.5_Flash-4285F4?logo=google-gemini)](https://deepmind.google/technologies/gemini/)
+[![Tailwind CSS](https://img.shields.io/badge/CSS-Tailwind_4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 
-Project ini dibuat sebagai latihan pengembangan aplikasi web menggunakan **Next.js** dan **Supabase**, serta sebagai bagian dari portfolio pengembangan web.
-
-👉 **[Live Demo: fintrack-id.vercel.app](https://fintrack-id.vercel.app/)**
-
----
-
-## ✨ What's New? (Mei 2026)
-
-Kami baru saja melakukan pembaruan besar-besaran untuk memberikan pengalaman pengelolaan keuangan yang lebih cerdas dan modern:
-
-### 🤖 AI Chat Assistant (Gemini Powered)
-- **Financial Consulting**: Tanya jawab langsung tentang kondisi keuanganmu.
-- **Context Aware**: AI memahami data transaksi dan budget kamu untuk memberikan saran personal.
-- **Natural Language**: Ngobrol santai layaknya punya asisten keuangan pribadi.
-
-### 📱 Mobile-First Navigation 2.0
-- **Floating Action Button (FAB)**: Akses cepat tambah transaksi di tengah navigasi.
-- **Static Bottom Nav**: Navigasi ala aplikasi mobile premium.
-- **Quick Settings**: Akses pengaturan langsung dari header mobile.
-
-### 💎 Premium Design System
-- **Dynamic Mesh Background**: Latar belakang bergerak yang elegan.
-- **Enhanced Glassmorphism**: Efek kartu transparan yang lebih dalam dan modern.
-- **Glow & Animation**: Sentuhan efek cahaya (glow) pada komponen cerdas.
+**FinanceFlow AI** is a professional-grade personal finance management system designed to transform raw transaction data into actionable intelligence. Built with a cutting-edge tech stack, it moves beyond simple tracking by leveraging Generative AI to provide contextual financial coaching.
 
 ---
 
-## Features
+## 💎 The Problem & Solution
 
-- Login menggunakan **Google Account (OAuth)**
-- **Multi-Account/Wallet** (V2): Tambah, Edit, dan Hapus sumber dana (Tunai, Bank, E-Wallet)
-- **Budgeting System** (V3): Atur anggaran bulanan per kategori dan pantau progres pengeluaran secara real-time
-- **Daily Spending Limit** (V3): Pasang batas belanja harian untuk kontrol keuangan yang lebih ketat
-- **Financial Goals** (V4): Sistem target menabung cerdas dengan fitur *Ambil/Isi Celengan* yang sinkron dengan saldo akun
-- **Advanced Analytics** (V4): Visualisasi data mendalam dengan *Interactive Time Filtering* (7 Hari, Bulan, Tahun)
-- **Cash Flow Trend** (V4): Grafik area interaktif untuk memantau saldo kumulatif harian (Arus Kas)
-- **AI Smart Insights** (V4): Analisis otomatis untuk mendeteksi pemborosan, kategori belanja terbesar, dan progres budget
-- **Spending Forecast** (V4): Prediksi pengeluaran akhir bulan menggunakan algoritma *weighted-average* dan deteksi tren belanja
-- **Premium UI/UX** (V3/V4): Glassmorphism design, mobile-optimized layouts, Skeleton loaders, dan Sonner notifications
-- **Mobile-First Navigation**: Menggunakan statis bottom navigation bar untuk mempermudah akses pada layar sentuh.
-- **Progressive Web App (PWA) Support**: Dapat di-install di Homescreen perangkat mobile dengan logo kustom (iOS/Android)
-- **Global Loading State**: Menggunakan `nextjs-toploader` untuk transisi halaman yang lebih interaktif
-- Menambahkan data **pemasukan** dan **pengeluaran** dengan fitur eksklusi limit harian
-- Melihat daftar transaksi (Terhubung otomatis dengan dompet yang digunakan)
-- Edit dan Hapus transaksi
-- Dashboard ringkasan keuangan interaktif
-- Autentikasi pengguna menggunakan **Supabase Auth**
-- Penyimpanan data menggunakan **Supabase Database** dengan RLS (Row Level Security) aktif
+Traditional finance trackers often fail because they require too much manual effort and offer too little value in return. Data entries are just numbers unless they are analyzed.
+
+**FinanceFlow AI** addresses this by:
+- **Reducing Cognitive Load**: Automating the analysis of spending habits.
+- **Contextual Intelligence**: Using LLMs to explain *why* your balance is dropping.
+- **Goal-Centric Design**: Shifting focus from "spending" to "saving" through dedicated goal tracking and budget enforcement.
 
 ---
 
-## Tech Stack
+## 🚀 Impactful Features
 
-Project ini dibangun menggunakan teknologi berikut:
+### 🤖 AI Financial Assistant (Gemini-Powered)
+- **Contextual Awareness**: Unlike generic chatbots, the "Finance Assistant" is injected with your real-time financial insights (spending peaks, budget overruns, and saving streaks).
+- **Proactive Analysis**: Identifies category "leaks" and suggests concrete steps to save.
+- **Natural Language Querying**: Ask "Where did my money go this week?" or "Can I afford a new laptop?"
 
-- **Next.js 16** – React framework dengan Turbopack (Latest Version)
-- **Supabase** – Backend as a Service untuk authentication dan database
-- **Google Gemini API** – Otak AI untuk fitur finansial konsultasi
-- **Tailwind CSS v4** – Desain antarmuka modern dan super cepat
-- **Vercel** – Platform deployment global
+### 📊 Advanced Visual Analytics
+- **Dynamic Dashboards**: Real-time visualization of Income vs. Expenses using Recharts.
+- **Category Deep-Dives**: Heatmaps and distribution charts to identify high-impact spending areas.
+- **Historical Comparison**: Month-over-month performance tracking to measure financial growth.
 
----
+### 🎯 Goal & Budget Management
+- **Savings Goals**: Track progress towards specific targets with deadline-aware progress bars.
+- **Budget Guardrails**: Set category-specific limits. The system triggers "danger" insights when budgets are breached.
+- **Automated Insights**: A dedicated engine that identifies "Small Wins" (e.g., Frugal Day streaks).
 
-## Installation
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/username/finance-tracker.git
-````
-
-Masuk ke folder project:
-
-```bash
-cd finance-tracker
-```
+### 📄 Professional Reporting
+- **Automated PDF Generation**: Generate comprehensive financial reports including visual bar charts of category spending and detailed transaction logs.
+- **Audit-Ready**: Structured summaries of net balance, total inflow, and total outflow.
 
 ---
 
-### 2. Install Dependencies
+## 🛠 Technical Architecture
 
-```bash
-npm install
-```
+The system is built on a **Modular Feature-Based Architecture**, ensuring high maintainability and scalability.
 
-atau
-
-```bash
-yarn install
-```
+- **Frontend**: Next.js 16 (App Router) with React 19, utilizing Server Components for performance and Client Components for interactivity.
+- **Backend-as-a-Service**: Supabase handles Authentication, PostgreSQL database, and Row-Level Security (RLS).
+- **AI Layer**: Integration with Google Gemini 2.5 Flash via Server Actions for secure, low-latency inferencing.
+- **Middleware/Proxy**: A custom `proxy.ts` implementation for robust session management and cookie syncing between Next.js and Supabase.
+- **Styling**: Tailwind CSS v4 for a modern, high-performance design system with glassmorphism effects.
 
 ---
 
-### 3. Setup Environment Variables
+## 🔒 Security Considerations
 
-Buat file `.env.local` di root project, lalu isi dengan konfigurasi Supabase berikut:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-Nilai tersebut bisa ditemukan di:
-
-Supabase Dashboard → **Project Settings → API**
+- **Row-Level Security (RLS)**: Database-level protection ensures users can strictly only access their own data.
+- **Server-Side Authentication**: All protected routes are guarded via `proxy.ts` at the edge, preventing unauthorized access before the page even renders.
+- **Environment Isolation**: Sensitive keys (Gemini API, Supabase Secrets) are never exposed to the client-side.
 
 ---
 
-### 4. Run the Project
+## ⚙️ Setup & Deployment
 
-```bash
-npm run dev
-```
+### Prerequisites
+- Node.js 20+
+- Supabase Project
+- Google AI (Gemini) API Key
 
-Aplikasi akan berjalan di:
-
-```
-http://localhost:3000
-```
-
----
-
-## Project Structure
-
-```
-finance-tracker
-│
-├── app
-│   ├── (auth)
-│   ├── (dashboard)
-│   └── globals.css
-│
-├── features
-│   ├── accounts
-│   ├── transactions
-│   ├── budgets
-│   ├── settings
-│   └── shared
-├── components
-│
-├── lib
-│   ├── supabaseClient.ts
-│   └── supabaseServer.ts
-│
-└── README.md
-```
+### Installation
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in `.env.local`:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   GOOGLE_GEMINI_API_KEY=your_gemini_key
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## Authentication
-
-Aplikasi ini menggunakan **Supabase Authentication** dengan metode login:
-
-* **Google OAuth**
-
-Saat pengguna login menggunakan Google, Supabase akan otomatis membuat akun pengguna dan menyimpan data user yang diperlukan.
-
----
-
-## Deployment
-
-Project ini dapat dengan mudah di-deploy menggunakan **Vercel**.
-
-Langkah umum deployment:
-
-1. Push project ke GitHub
-2. Import repository ke Vercel
-3. Tambahkan environment variables Supabase
-4. Deploy aplikasi
-
----
-
-## Purpose
-
-Project ini dibuat untuk:
-
-* Melatih penggunaan **Next.js**
-* Memahami **authentication menggunakan Supabase**
-* Mengimplementasikan **OAuth login**
-* Membuat aplikasi web sederhana untuk manajemen keuangan
-
----
-
-## Author
-
-**Eriel Budiman**
-Information Systems Student
-UIN Raden Fatah Palembang
-
-```
-```
+## 🚀 Future Roadmap
+- **Receipt OCR**: Automatically scan and categorize transactions using AI Vision.
+- **Bank API Integration**: Live sync with financial institutions (Plaid/Salt Edge).
+- **Predictive Analytics**: AI-driven forecasting of end-of-month balances based on current velocity.
+- **Multi-Currency Support**: Real-time exchange rate conversions for international users.

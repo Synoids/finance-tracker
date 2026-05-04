@@ -4,17 +4,20 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabaseClient';
 import { Transaction, INCOME_CATEGORIES, EXPENSE_CATEGORIES } from '@/lib/types';
 import { formatDate, formatCurrency, getCategoryColor } from '@/lib/utils';
-import { Plus, Pencil, Trash2, Search, X, ArrowUpRight, ArrowDownRight, ChevronDown } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, ArrowUpRight, ArrowDownRight, ChevronDown, FileDown } from 'lucide-react';
 import Link from 'next/link';
 import TransactionForm from '@/features/transactions/components/TransactionForm';
+import ExportModal, { ExportOptions } from '@/features/transactions/components/ExportModal';
 import Modal from '@/components/Modal';
 import { Account } from '@/features/accounts/queries';
 import EmptyState from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { exportTransactionsToPDF } from '@/lib/export';
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [accounts, setAccounts]         = useState<Account[]>([]);
+  const [user, setUser]                 = useState<any>(null);
   const [loading, setLoading]           = useState(true);
   const [search, setSearch]             = useState('');
   const [filterType, setFilterType]     = useState<'all' | 'income' | 'expense'>('all');
@@ -23,6 +26,7 @@ export default function TransactionsPage() {
   const [editTarget, setEditTarget]     = useState<Transaction | null>(null);
   const [deleteId, setDeleteId]         = useState<string | null>(null);
   const [deleting, setDeleting]         = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const allCategories = [...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES];
 
@@ -30,14 +34,16 @@ export default function TransactionsPage() {
     setLoading(true);
     const supabase = createClient();
     
-    // Fetch both transactions and accounts simultaneously
-    const [{ data: txs }, { data: accs }] = await Promise.all([
+    // Fetch both transactions, accounts and user simultaneously
+    const [{ data: txs }, { data: accs }, { data: { user: userData } }] = await Promise.all([
       supabase.from('transactions').select('*').order('date', { ascending: false }),
-      supabase.from('accounts').select('id, name, type, balance')
+      supabase.from('accounts').select('id, name, type, balance'),
+      supabase.auth.getUser()
     ]);
 
     setTransactions(txs as Transaction[] ?? []);
     setAccounts(accs as Account[] ?? []);
+    setUser(userData);
     setLoading(false);
   }, []);
 
@@ -67,6 +73,49 @@ export default function TransactionsPage() {
     fetchTransactions();
   }
 
+  function handleExport(options: ExportOptions) {
+    let dataToExport = [...transactions];
+    const now = new Date();
+    
+    // 1. Filter by Period
+    if (options.period === 'current_month') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      dataToExport = dataToExport.filter(t => new Date(t.date) >= start);
+    } else if (options.period === 'last_month') {
+      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const end = new Date(now.getFullYear(), now.getMonth(), 0);
+      dataToExport = dataToExport.filter(t => {
+        const d = new Date(t.date);
+        return d >= start && d <= end;
+      });
+    } else if (options.period === 'last_3_months') {
+      const start = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+      dataToExport = dataToExport.filter(t => new Date(t.date) >= start);
+    }
+
+    // 2. Filter by Category
+    if (options.category !== 'all') {
+      dataToExport = dataToExport.filter(t => t.category === options.category);
+    }
+
+    // 3. Filter by Type
+    if (options.type !== 'all') {
+      dataToExport = dataToExport.filter(t => t.type === options.type);
+    }
+
+    const periodLabelMap = {
+      'current_month': 'Bulan Ini',
+      'last_month': 'Bulan Lalu',
+      'last_3_months': '3 Bulan Terakhir',
+      'all': 'Keseluruhan'
+    };
+
+    const label = `Laporan Transaksi - ${periodLabelMap[options.period]}${options.category !== 'all' ? ` (${options.category})` : ''}`;
+        
+    exportTransactionsToPDF(dataToExport, user?.email, label);
+    setShowExportModal(false);
+  }
+
   function clearFilters() {
     setFilterType('all');
     setFilterCategory('all');
@@ -84,14 +133,23 @@ export default function TransactionsPage() {
           <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Transaksi</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{filtered.length} transaksi</p>
         </div>
-        <Link 
-          href="/transactions/new" 
-          id="new-transaction-btn" 
-          className="btn-primary w-full sm:w-auto h-11 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
-        >
-          <Plus className="w-4 h-4" /> 
-          <span>Tambah Transaksi</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="btn-secondary h-11 px-4 flex items-center gap-2"
+          >
+            <FileDown className="w-4 h-4" />
+            <span className="hidden sm:inline">Export PDF</span>
+          </button>
+          <Link 
+            href="/transactions/new" 
+            id="new-transaction-btn" 
+            className="btn-primary w-full sm:w-auto h-11 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
+          >
+            <Plus className="w-4 h-4" /> 
+            <span>Tambah Transaksi</span>
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}
@@ -232,6 +290,16 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <Modal title="Export Laporan Keuangan" onClose={() => setShowExportModal(false)}>
+          <ExportModal 
+            onExport={handleExport} 
+            onClose={() => setShowExportModal(false)} 
+          />
+        </Modal>
+      )}
 
       {/* Edit Modal */}
       {editTarget && (
