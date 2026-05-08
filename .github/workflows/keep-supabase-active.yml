@@ -2,7 +2,7 @@ name: Keep Supabase Database Active
 
 on:
   schedule:
-    # Jalankan setiap 6 hari sekali pada pukul 00:00 UTC
+    # Jalankan setiap 3 hari sekali pada pukul 00:00 UTC
     # Cron: menit jam hari bulan hari-dalam-seminggu
     - cron: '0 0 */3 * *'
   workflow_dispatch: # Memungkinkan trigger manual
@@ -10,7 +10,7 @@ on:
 jobs:
   ping-database:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install @supabase/supabase-js
+        run: npm install @supabase/supabase-js ws
 
       - name: Ping Supabase Database
         env:
@@ -30,12 +30,12 @@ jobs:
         run: |
           node -e "
           const { createClient } = require('@supabase/supabase-js');
-          
+          const ws = require('ws');
           const supabase = createClient(
             process.env.SUPABASE_URL,
-            process.env.SUPABASE_ANON_KEY
+            process.env.SUPABASE_ANON_KEY,
+            { realtime: { transport: { WebSocket: ws } } }
           );
-          
           (async () => {
             try {
               // Ping database dengan query sederhana
@@ -43,7 +43,6 @@ jobs:
                 .from('_keep_alive')
                 .select('*')
                 .limit(1);
-              
               if (error && error.code !== 'PGRST116') {
                 // PGRST116 = table tidak ditemukan, itu OK
                 console.log('Ping successful - Error yang diharapkan:', error.message);
