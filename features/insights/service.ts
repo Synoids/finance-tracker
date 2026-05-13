@@ -1,6 +1,54 @@
 import { createClient } from "@/lib/supabaseServer";
-import { Insight, Transaction, Budget } from "@/lib/types";
+import { Insight, Transaction, Budget, Goal } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
+import { Account } from "@/features/accounts/queries";
+
+export interface RawFinancialData {
+  accounts: Account[];
+  recentTransactions: Transaction[];
+  currentMonthTransactions: Transaction[];
+  budgets: Budget[];
+  goals: Goal[];
+  userSettings: {
+    daily_limit: number;
+  } | null;
+}
+
+export async function getRawFinancialData(): Promise<RawFinancialData | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+  // Fetch all data in parallel
+  const [
+    { data: accounts },
+    { data: recentTxs },
+    { data: currentTxs },
+    { data: budgets },
+    { data: goals },
+    { data: settings }
+  ] = await Promise.all([
+    supabase.from('accounts').select('*').eq('user_id', user.id),
+    supabase.from('transactions').select('*').eq('user_id', user.id).order('date', { ascending: false }).limit(50),
+    supabase.from('transactions').select('*').eq('user_id', user.id).gte('date', currentMonthStart),
+    supabase.from('budgets').select('*').eq('user_id', user.id).eq('month', currentMonthStart),
+    supabase.from('goals').select('*').eq('user_id', user.id),
+    supabase.from('user_settings').select('daily_limit').eq('user_id', user.id).single()
+  ]);
+
+  return {
+    accounts: (accounts as Account[]) || [],
+    recentTransactions: (recentTxs as Transaction[]) || [],
+    currentMonthTransactions: (currentTxs as Transaction[]) || [],
+    budgets: (budgets as Budget[]) || [],
+    goals: (goals as Goal[]) || [],
+    userSettings: settings || { daily_limit: 0 }
+  };
+}
 
 export async function getFinancialInsights(): Promise<Insight[]> {
   const supabase = await createClient();
@@ -11,7 +59,6 @@ export async function getFinancialInsights(): Promise<Insight[]> {
   const now = new Date();
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
-  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0];
 
   // 1. Fetch current month transactions
   const { data: currentTxs } = await supabase
@@ -99,34 +146,15 @@ export async function getFinancialInsights(): Promise<Insight[]> {
     const share = (topAmount / currTotal) * 100;
     
     if (share > 30) {
-      const essentialCats = ['Kesehatan', 'Pendidikan', 'Tagihan', 'Zakat', 'Cicilan', 'Pajak', 'Grosir', 'Sembako', 'Sewa Rumah', 'Asuransi'];
       const lifestyleCats = ['Hiburan', 'Belanja', 'Makan-makan', 'Hobi', 'Liburan', 'Kecantikan', 'Cafe', 'Rokok'];
-      const savingCats = ['Investasi', 'Tabungan', 'Dana Darurat'];
-
-      const isEssential = essentialCats.includes(topCat);
       const isLifestyle = lifestyleCats.includes(topCat);
-      const isSaving = savingCats.includes(topCat);
       
       let shareText = "";
       if (share >= 95) shareText = "Hampir seluruh";
       else if (share >= 50) shareText = "Lebih dari separuh";
       else shareText = "Cukup banyak";
 
-      if (isSaving) {
-        insights.push({
-          type: 'success',
-          title: `Luar Biasa di ${topCat}!`,
-          description: `Hebat! ${share.toFixed(0)}% pengeluaranmu dialokasikan untuk ${topCat}. Ini adalah langkah terbaik untuk masa depanmu.`,
-          icon: 'Award'
-        });
-      } else if (isEssential) {
-        insights.push({
-          type: 'info',
-          title: `Prioritas: ${topCat}`,
-          description: `Bulan ini kamu banyak mengalokasikan dana untuk ${topCat}. Ini adalah kebutuhan dasar yang memang perlu diutamakan.`,
-          icon: 'Shield'
-        });
-      } else if (isLifestyle) {
+      if (isLifestyle) {
         insights.push({
           type: 'warning',
           title: `Evaluasi ${topCat}`,
@@ -134,7 +162,6 @@ export async function getFinancialInsights(): Promise<Insight[]> {
           icon: 'Target'
         });
       } else {
-        // Fallback for uncategorized or others
         insights.push({
           type: 'info',
           title: `Analisis ${topCat}`,
@@ -177,15 +204,6 @@ export async function getFinancialInsights(): Promise<Insight[]> {
     });
   }
 
-  // Handle empty data case
-  if (insights.length === 0) {
-    insights.push({
-      type: 'info',
-      title: 'Mari Mulai Beraksi!',
-      description: 'Catat transaksi pertamamu hari ini. Saya siap membantumu menganalisis setiap rupiah yang keluar!',
-      icon: 'PieChart'
-    });
-  }
-
   return insights.slice(0, 4);
 }
+

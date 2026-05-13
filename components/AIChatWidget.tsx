@@ -44,10 +44,11 @@ export default function AIChatWidget() {
 
     const userMsg = text.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    const newMessages: Message[] = [...messages, { role: 'user', content: userMsg }];
+    setMessages(newMessages);
     setIsLoading(true);
 
-    const result = await sendChatMessage(userMsg);
+    const result = await sendChatMessage(userMsg, newMessages);
 
     setIsLoading(false);
     if (result.success && result.response) {
@@ -56,6 +57,7 @@ export default function AIChatWidget() {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Maaf, terjadi kesalahan. Coba lagi nanti.' }]);
     }
   };
+
 
   return (
     <>
